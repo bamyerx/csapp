@@ -34,7 +34,7 @@
 
 int int_size_is_32_1(void) {
 	/* Set most significant bit of 32-bit machine */
-	int set_msb = 1 << 32;
+	int set_msb = 1 << 31;
 
 	/* Instead of using a 32-bit left shift, shift set_msb left by a bit */
 	return set_msb && !(set_msb << 1);

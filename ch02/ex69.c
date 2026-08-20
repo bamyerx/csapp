@@ -1,5 +1,6 @@
 /*
- * Write code for a function with the following prototype:
+ * Homework Problem 2.69 from CS:APP: Write code for a function with the 
+ * following prototype:
  *
  *     Do rotating left shift. Assume 0 <= n < w.
  *     Examples when x = 0x12345678 and w = 32:

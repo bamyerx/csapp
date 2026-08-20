@@ -28,10 +28,12 @@
  * B. Show how you can rewrite the conditional test to make it work properly.
  *
  * We can simply remove the comparison to 0 and compare maxbytes and sizeof(val)
- * directly. As a side note, maxbytes should also probably have type size_t.
+ * directly. Additionally, maxbytes should have type size_t.
  */
 
-void copy_int(int val, void *buf, int maxbytes) {
+#include <string.h>
+
+void copy_int(int val, void *buf, size_t maxbytes) {
 	if (maxbytes >= sizeof(val))
 		memcpy(buf, (void *) &val, sizeof(val));
 }

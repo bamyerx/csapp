@@ -1,5 +1,5 @@
 /*
- * Homework problem 2.68 from CS:APP: Write code for a function with the
+ * Homework Problem 2.68 from CS:APP: Write code for a function with the
  * following prototype:
  *
  *     Mask with least significant n bits set to 1

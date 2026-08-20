@@ -14,7 +14,7 @@ int int_shifts_are_arithmetic(void)
 
 int main(void)
 {
-	if (int_shifts_are_arithmetic)
+	if (int_shifts_are_arithmetic())
 		printf("Int shifts are arithmetic\n");
 	else
 		printf("Int shifts are logical\n");

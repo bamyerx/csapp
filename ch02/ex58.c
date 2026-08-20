@@ -19,7 +19,7 @@ int is_little_endian(void)
 
 int main(void)
 {
-	if (is_little_endian)
+	if (is_little_endian())
 		printf("Little-endian\n");
 	else
 		printf("Big-endian\n");
