@@ -247,7 +247,7 @@ int isLessOrEqual(int x, int y) {
 	int ncond1 = !(!xsign & ysign);
 	/* sufficient: x and y are equal */
 	int scond1 = !(x ^ y);
-	/* sufficient: x is negative and y is positive */
+	/* sufficient: x is negative and y is nonnegative */
 	int scond2 = (xsign & !ysign);
 	/* sufficient: x and y both have the same sign and x - y is negative */
 	int scond3 = !(xsign ^ ysign) & subsign;
@@ -265,14 +265,12 @@ int isLessOrEqual(int x, int y) {
  */
 int logicalNeg(int x) {
 	/* 
-	 * sign(~x) & sign(~(-x)) iff x = 0:
-	 * x = -x iff x = 0 or x = TMin
-	 * if x = 0, ~x = -1 and sign(~x) = sign(~(-x)) = 1
-	 * if x = TMin, ~x = TMax and sign(~x) = 0 != sign(~(-x)) = 1
+	 * for x != 0, sign(x) | sign(-x) = 1, and 0 for x = 0
+	 * so with sign extension, we have
+	 *     x != 0 => -1 + 1 = 0
+	 *     x == 0 =>  0 + 1 = 1
 	 */
-	int comp_sign = (~x >> 31) & 1;
-	int comp_inv_sign = (~(~x + 1) >> 31) & 1;
-	return comp_sign & comp_inv_sign;
+	return ((x | (~x + 1)) >> 31) + 1;
 }
 /* howManyBits - return the minimum number of bits required to represent x in
  *             two's complement
