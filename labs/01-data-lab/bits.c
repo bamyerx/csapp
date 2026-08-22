@@ -289,35 +289,35 @@ int logicalNeg(int x) {
 int howManyBits(int x) {
 	/* 0xFFFFFFFF if x is negative, 0 otherwise */
 	int sign = x >> 31;
-	int byte0, byte1, byte2, byte3, total;
+	int nbits = 0;
+	int b16, b8, b4, b2, b1;
 	/* if x is negative, take the complement */
 	x = (~sign & x) | (sign & ~x);
-	/* use successive ORs to set all bits right of leading 1 */
-	x |= x >> 1;
-	x |= x >> 2;
-	x |= x >> 4;
-	x |= x >> 8;
-	x |= x >> 16;
-	/* compute the number of set bits in each byte */
-	byte0 = x & 0xFF;
-	byte0 = (byte0 & 0x55) + ((byte0 >> 1) & 0x55);
-	byte0 = (byte0 & 0x33) + ((byte0 >> 2) & 0x33);
-	byte0 = (byte0 & 0x0F) + ((byte0 >> 4) & 0x0F);
-	byte1 = (x >> 8) & 0xFF;
-	byte1 = (byte1 & 0x55) + ((byte1 >> 1) & 0x55);
-	byte1 = (byte1 & 0x33) + ((byte1 >> 2) & 0x33);
-	byte1 = (byte1 & 0x0F) + ((byte1 >> 4) & 0x0F);
-	byte2 = (x >> 16) & 0xFF;
-	byte2 = (byte2 & 0x55) + ((byte2 >> 1) & 0x55);
-	byte2 = (byte2 & 0x33) + ((byte2 >> 2) & 0x33);
-	byte2 = (byte2 & 0x0F) + ((byte2 >> 4) & 0x0F);
-	byte3 = (x >> 24) & 0xFF;
-	byte3 = (byte3 & 0x55) + ((byte3 >> 1) & 0x55);
-	byte3 = (byte3 & 0x33) + ((byte3 >> 2) & 0x33);
-	byte3 = (byte3 & 0x0F) + ((byte3 >> 4) & 0x0F);
-	total = byte0 + byte1 + byte2 + byte3;
-	/* add one for the sign bit */
-	return total + 1;
+	/* 
+	 * find the position of the most significant bit by binary search:
+	 * - for each pass, check if the msb is in the upper or lower half
+	 * - encode and accumulate the positional data in nbits
+	 * - shift x based on where the msb was found
+	 */
+	b16 = !!(x >> 16);
+	nbits += b16 << 4;
+	x >>= b16 << 4;
+	b8 = !!(x >> 8);
+	nbits += b8 << 3;
+	x >>= b8 << 3;
+	b4 = !!(x >> 4);
+	nbits += b4 << 2;
+	x >>= b4 << 2;
+	b2 = !!(x >> 2);
+	nbits += b2 << 1;
+	x >>= b2 << 1;
+	b1 = !!(x >> 1);
+	nbits += b1;
+	x >>= b1;
+	nbits += x;
+
+	/* add an extra bit for the sign bit */
+	return nbits + 1;
 }
 //float
 /* 
@@ -404,14 +404,14 @@ unsigned floatPower2(int x) {
 	/* 
 	 * an explanation of the magic numbers:
 	 * the largest normal value is 2^127 = 0x7F000000
-	 *     this has floating point representation 0x7F000000
-	 *     sign = 0, exp = 0xFE, frac = 0x000000
+	 *     - this has floating point representation 0x7F000000
+	 *     - sign = 0, exp = 0xFE, frac = 0x000000
 	 * the smallest normal value is 2^(-126): 0x00800000
-	 *     this has floating point representation 0x00800000
-	 *     sign = 0, exp = 0x01, frac = 0x000000
+	 *     - this has floating point representation 0x00800000
+	 *     - sign = 0, exp = 0x01, frac = 0x000000
 	 * the smallest denormal value is 2^(-126 - 23) = 2^(-149)
-	 *     this has floating point representation 0x00000001
-	 *     sign = 0, exp = 0x00, frac = 0x000001
+	 *     - this has floating point representation 0x00000001
+	 *     - sign = 0, exp = 0x00, frac = 0x000001
 	 */
     unsigned exp = 0;
 	unsigned frac = 0;
